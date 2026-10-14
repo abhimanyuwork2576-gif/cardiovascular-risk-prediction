@@ -1,0 +1,255 @@
+{
+  "feature_columns": [
+    "Age",
+    "Weight",
+    "Length",
+    "Sex",
+    "BMI",
+    "DM",
+    "HTN",
+    "Current Smoker",
+    "EX-Smoker",
+    "FH",
+    "Obesity",
+    "CRF",
+    "CVA",
+    "Airway disease",
+    "Thyroid Disease",
+    "CHF",
+    "DLP",
+    "BP",
+    "PR",
+    "Edema",
+    "Weak Peripheral Pulse",
+    "Lung rales",
+    "Systolic Murmur",
+    "Diastolic Murmur",
+    "Typical Chest Pain",
+    "Dyspnea",
+    "Function Class",
+    "Atypical",
+    "Nonanginal",
+    "Exertional CP",
+    "LowTH Ang",
+    "Q Wave",
+    "St Elevation",
+    "St Depression",
+    "Tinversion",
+    "LVH",
+    "Poor R Progression",
+    "FBS",
+    "CR",
+    "TG",
+    "LDL",
+    "HDL",
+    "BUN",
+    "ESR",
+    "HB",
+    "K",
+    "Na",
+    "WBC",
+    "Lymph",
+    "Neut",
+    "PLT",
+    "EF-TTE",
+    "Region RWMA",
+    "BBB_N",
+    "BBB_RBBB",
+    "VHD_N",
+    "VHD_Severe",
+    "VHD_mild"
+  ],
+  "defaults": {
+    "Age": 58.0,
+    "Weight": 74.0,
+    "Length": 165.0,
+    "Sex": 1.0,
+    "BMI": 26.775510204081638,
+    "DM": 0.0,
+    "HTN": 1.0,
+    "Current Smoker": 0.0,
+    "EX-Smoker": 0.0,
+    "FH": 0.0,
+    "Obesity": 1.0,
+    "CRF": 0.0,
+    "CVA": 0.0,
+    "Airway disease": 0.0,
+    "Thyroid Disease": 0.0,
+    "CHF": 0.0,
+    "DLP": 0.0,
+    "BP": 130.0,
+    "PR": 70.0,
+    "Edema": 0.0,
+    "Weak Peripheral Pulse": 0.0,
+    "Lung rales": 0.0,
+    "Systolic Murmur": 0.0,
+    "Diastolic Murmur": 0.0,
+    "Typical Chest Pain": 1.0,
+    "Dyspnea": 0.0,
+    "Function Class": 0.0,
+    "Atypical": 0.0,
+    "Nonanginal": 0.0,
+    "Exertional CP": 0.0,
+    "LowTH Ang": 0.0,
+    "Q Wave": 0.0,
+    "St Elevation": 0.0,
+    "St Depression": 0.0,
+    "Tinversion": 0.0,
+    "LVH": 0.0,
+    "Poor R Progression": 0.0,
+    "FBS": 98.0,
+    "CR": 1.0,
+    "TG": 122.0,
+    "LDL": 100.0,
+    "HDL": 39.0,
+    "BUN": 16.0,
+    "ESR": 15.0,
+    "HB": 13.2,
+    "K": 4.2,
+    "Na": 141.0,
+    "WBC": 7100.0,
+    "Lymph": 32.0,
+    "Neut": 60.0,
+    "PLT": 210.0,
+    "EF-TTE": 50.0,
+    "Region RWMA": 0.0,
+    "BBB_N": 1.0,
+    "BBB_RBBB": 0.0,
+    "VHD_N": 0.0,
+    "VHD_Severe": 0.0,
+    "VHD_mild": 0.0
+  },
+  "metrics": {
+    "CAD": {
+      "accuracy": 0.8197,
+      "roc_auc": 0.8643,
+      "f1_score": 0.8736,
+      "precision": 0.8636,
+      "recall": 0.8837,
+      "sample_count": 303,
+      "positive_rate": 0.7129
+    },
+    "LAD": {
+      "accuracy": 0.7377,
+      "roc_auc": 0.8244,
+      "f1_score": 0.7778,
+      "precision": 0.7778,
+      "recall": 0.7778,
+      "sample_count": 303,
+      "positive_rate": 0.5842
+    },
+    "LCX": {
+      "accuracy": 0.6885,
+      "roc_auc": 0.7399,
+      "f1_score": 0.5778,
+      "precision": 0.619,
+      "recall": 0.5417,
+      "sample_count": 303,
+      "positive_rate": 0.3927
+    },
+    "RCA": {
+      "accuracy": 0.6885,
+      "roc_auc": 0.7803,
+      "f1_score": 0.5778,
+      "precision": 0.5909,
+      "recall": 0.5652,
+      "sample_count": 303,
+      "positive_rate": 0.3762
+    }
+  },
+  "targets": [
+    "CAD",
+    "LAD",
+    "LCX",
+    "RCA"
+  ],
+  "target_descriptions": {
+    "CAD": "Overall Coronary Artery Disease Status (Cath finding)",
+    "LAD": "Left Anterior Descending Coronary Artery Stenosis (>=50%)",
+    "LCX": "Left Circumflex Coronary Artery Stenosis (>=50%)",
+    "RCA": "Right Coronary Artery Stenosis (>=50%)"
+  },
+  "global_feature_importance": [
+    {
+      "feature": "Typical Chest Pain",
+      "importance": 1.33203
+    },
+    {
+      "feature": "Age",
+      "importance": 0.43807
+    },
+    {
+      "feature": "EF-TTE",
+      "importance": 0.41471
+    },
+    {
+      "feature": "ESR",
+      "importance": 0.29958
+    },
+    {
+      "feature": "FBS",
+      "importance": 0.29807
+    },
+    {
+      "feature": "Region RWMA",
+      "importance": 0.28519
+    },
+    {
+      "feature": "TG",
+      "importance": 0.24079
+    },
+    {
+      "feature": "HTN",
+      "importance": 0.17229
+    },
+    {
+      "feature": "Tinversion",
+      "importance": 0.13624
+    },
+    {
+      "feature": "BP",
+      "importance": 0.12266
+    },
+    {
+      "feature": "Atypical",
+      "importance": 0.09793
+    },
+    {
+      "feature": "PR",
+      "importance": 0.07819
+    },
+    {
+      "feature": "BMI",
+      "importance": 0.07054
+    },
+    {
+      "feature": "Weight",
+      "importance": 0.06471
+    },
+    {
+      "feature": "LDL",
+      "importance": 0.05853
+    },
+    {
+      "feature": "HB",
+      "importance": 0.05825
+    },
+    {
+      "feature": "VHD_N",
+      "importance": 0.0581
+    },
+    {
+      "feature": "K",
+      "importance": 0.05365
+    },
+    {
+      "feature": "CR",
+      "importance": 0.05113
+    },
+    {
+      "feature": "HDL",
+      "importance": 0.03128
+    }
+  ],
+  "cad_base_value": -0.09998387843370438
+}

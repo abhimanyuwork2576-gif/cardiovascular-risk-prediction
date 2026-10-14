@@ -1,0 +1,14 @@
+__pycache__/
+*.py[cod]
+*$py.class
+*.log
+.gemini/
+cloudflared.exe
+scratch/
+.env
+venv/
+.vscode/
+ACTIVE_PUBLIC_LINK.txt
+Open_Public_Website.url
+test_cf.log
+cardio-risk-cad/

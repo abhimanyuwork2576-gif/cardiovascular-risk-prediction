@@ -1,0 +1,382 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Track A: Cardiovascular Risk Visualization & Prediction</title>
+    <!-- Stylesheets -->
+    <link rel="stylesheet" href="/static/css/style.css?v=2">
+    <!-- Favicon -->
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🫀</text></svg>">
+</head>
+<body>
+
+    <!-- Clinical Safety Disclaimer Banner (Mandatory Requirement) -->
+    <div class="disclaimer-banner">
+        <span>⚠️ <strong>CLINICAL SAFETY NOTICE:</strong> For educational and decision-support purposes only. Not a substitute for formal diagnostic imaging.</span>
+    </div>
+
+    <!-- Application Header -->
+    <header class="app-header">
+        <div class="header-container">
+            <div class="header-title-group">
+                <h1>
+                    <span class="brand-icon">🫀</span>
+                    Cardiovascular Risk Visualization & Stenosis Prediction
+                </h1>
+                <p>Track A: Real-Time Multi-Vessel Stenosis Assessment (LAD, LCX, RCA) with Explainable AI (SHAP)</p>
+            </div>
+            <div class="header-meta">
+                <div class="model-badge" id="model-metrics-summary">
+                    <span>XGBoost Classifier</span>
+                    <span class="divider">|</span>
+                    <span>Z-Alizadeh Sani Benchmark</span>
+                    <span class="divider">|</span>
+                    <span>Target Leakage Shielded</span>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Clinical Presets Toolbar -->
+    <section class="presets-bar">
+        <span class="presets-label">Clinical Presets:</span>
+        <div class="presets-list" id="presets-list">
+            <!-- Dynamically populated from /patients/presets -->
+        </div>
+    </section>
+
+    <!-- Main Dashboard Grid -->
+    <main class="dashboard-grid">
+
+        <!-- Column 1: Patient Clinical Parameters Form -->
+        <section class="left-column">
+            <div class="card">
+                <div class="card-header">
+                    <span class="card-title">📋 Patient Clinical Profile</span>
+                    <button type="button" id="reset-form-btn" class="control-pill-btn" title="Reset to low risk baseline">Reset</button>
+                </div>
+                <div class="card-body">
+                    <form id="clinical-form">
+                        
+                        <!-- Demographics & Vitals -->
+                        <div class="form-section-title">1. Demographics & Hemodynamics</div>
+                        <div class="form-row three-col">
+                            <div class="form-group">
+                                <label for="input-age">Age (yrs)</label>
+                                <input type="number" id="input-age" name="Age" class="form-control" min="20" max="95" value="65" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="input-sex">Sex</label>
+                                <select id="input-sex" name="Sex" class="form-control">
+                                    <option value="Male" selected>Male</option>
+                                    <option value="Female">Female</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="input-bmi">BMI</label>
+                                <input type="number" id="input-bmi" name="BMI" class="form-control" step="0.1" min="15" max="50" value="28.4">
+                            </div>
+                        </div>
+
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="input-bp">Systolic BP (mmHg)</label>
+                                <input type="number" id="input-bp" name="BP" class="form-control" min="80" max="220" value="145">
+                            </div>
+                            <div class="form-group">
+                                <label for="input-pr">Pulse Rate (bpm)</label>
+                                <input type="number" id="input-pr" name="PR" class="form-control" min="40" max="150" value="78">
+                            </div>
+                        </div>
+
+                        <!-- Risk Factors & History -->
+                        <div class="form-section-title">2. Cardiovascular Risk Factors</div>
+                        <div class="form-checkbox-group">
+                            <label class="checkbox-label">
+                                <input type="checkbox" name="DM" value="1" checked> Diabetes Mellitus
+                            </label>
+                            <label class="checkbox-label">
+                                <input type="checkbox" name="HTN" value="1" checked> Hypertension
+                            </label>
+                            <label class="checkbox-label">
+                                <input type="checkbox" name="Current Smoker" value="1" checked> Active Smoker
+                            </label>
+                            <label class="checkbox-label">
+                                <input type="checkbox" name="FH" value="1"> Family History
+                            </label>
+                            <label class="checkbox-label">
+                                <input type="checkbox" name="DLP" value="1" checked> Dyslipidemia
+                            </label>
+                            <label class="checkbox-label">
+                                <input type="checkbox" name="Obesity" value="1"> Obesity
+                            </label>
+                        </div>
+
+                        <!-- Symptoms & Presentation -->
+                        <div class="form-section-title">3. Anginal Symptoms & Class</div>
+                        <div class="form-checkbox-group">
+                            <label class="checkbox-label">
+                                <input type="checkbox" name="Typical Chest Pain" value="1" checked> Typical Anginal CP
+                            </label>
+                            <label class="checkbox-label">
+                                <input type="checkbox" name="Dyspnea" value="1"> Exertional Dyspnea
+                            </label>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="input-func-class">NYHA Functional Class</label>
+                                <select id="input-func-class" name="Function Class" class="form-control">
+                                    <option value="0">Class 0 (Asymptomatic)</option>
+                                    <option value="1">Class I (Mild)</option>
+                                    <option value="2" selected>Class II (Moderate)</option>
+                                    <option value="3">Class III/IV (Severe)</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <!-- ECG & Echocardiogram Markers -->
+                        <div class="form-section-title">4. Electrocardiogram & Echo</div>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="input-ef">LVEF % (EF-TTE)</label>
+                                <input type="number" id="input-ef" name="EF-TTE" class="form-control" min="15" max="70" value="45">
+                            </div>
+                            <div class="form-group">
+                                <label for="input-rwma">Regional Wall Motion (RWMA)</label>
+                                <select id="input-rwma" name="Region RWMA" class="form-control">
+                                    <option value="0">0 - None (Normal)</option>
+                                    <option value="1">1 - Mild Segmental</option>
+                                    <option value="2" selected>2 - Moderate Regional</option>
+                                    <option value="3">3 - Multi-Territory</option>
+                                    <option value="4">4 - Severe Global</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="form-checkbox-group">
+                            <label class="checkbox-label">
+                                <input type="checkbox" name="St Depression" value="1" checked> ST Depression
+                            </label>
+                            <label class="checkbox-label">
+                                <input type="checkbox" name="St Elevation" value="1"> ST Elevation
+                            </label>
+                            <label class="checkbox-label">
+                                <input type="checkbox" name="Tinversion" value="1" checked> T-Wave Inversion
+                            </label>
+                            <label class="checkbox-label">
+                                <input type="checkbox" name="Q Wave" value="1"> Pathological Q Wave
+                            </label>
+                        </div>
+
+                        <!-- Laboratory Biomarkers -->
+                        <div class="form-section-title">5. Laboratory Chemistries</div>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="input-fbs">Fasting Glucose (mg/dL)</label>
+                                <input type="number" id="input-fbs" name="FBS" class="form-control" min="60" max="400" value="165">
+                            </div>
+                            <div class="form-group">
+                                <label for="input-tg">Triglycerides (mg/dL)</label>
+                                <input type="number" id="input-tg" name="TG" class="form-control" min="40" max="800" value="230">
+                            </div>
+                        </div>
+
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="input-ldl">LDL Cholesterol (mg/dL)</label>
+                                <input type="number" id="input-ldl" name="LDL" class="form-control" min="30" max="250" value="142">
+                            </div>
+                            <div class="form-group">
+                                <label for="input-hdl">HDL Cholesterol (mg/dL)</label>
+                                <input type="number" id="input-hdl" name="HDL" class="form-control" min="15" max="100" value="34">
+                            </div>
+                        </div>
+
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="input-cr">Serum Creatinine (mg/dL)</label>
+                                <input type="number" id="input-cr" name="CR" class="form-control" step="0.1" min="0.5" max="5.0" value="1.2">
+                            </div>
+                            <div class="form-group">
+                                <label for="input-esr">ESR (mm/hr)</label>
+                                <input type="number" id="input-esr" name="ESR" class="form-control" min="1" max="100" value="28">
+                            </div>
+                        </div>
+
+                        <button type="submit" class="btn-primary" id="predict-btn">
+                            <span>⚡ Calculate Risk & Explain</span>
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </section>
+
+        <!-- Column 2: 3D Interactive Heart & Vessel Color-Coding -->
+        <section class="center-column">
+            
+            <!-- 3D Heart Viewer Card -->
+            <div class="card viewer-card">
+                <div class="card-header">
+                    <span class="card-title">🫀 3D Anatomical Heart & Coronary Tree</span>
+                    <div class="viewer-header-controls">
+                        <button type="button" class="control-pill-btn active" data-camera-preset="anterior" title="Focus on LAD and anterior LV">Anterior (LAD)</button>
+                        <button type="button" class="control-pill-btn" data-camera-preset="lateral" title="Focus on LCX and lateral wall">Lateral (LCX)</button>
+                        <button type="button" class="control-pill-btn" data-camera-preset="inferior" title="Focus on RCA and inferior wall">Inferior (RCA)</button>
+                        <button type="button" class="control-pill-btn" data-camera-preset="reset" title="Reset camera angle">Reset</button>
+                    </div>
+                </div>
+
+                <div class="heart-3d-wrapper">
+                    <div id="heart-canvas-container"></div>
+
+                    <!-- Overlay HUD Controls -->
+                    <div class="viewer-overlay-hud">
+                        <div class="hud-control-group">
+                            <label for="opacity-slider">Myocardium Opacity:</label>
+                            <input type="range" id="opacity-slider" min="0.15" max="1.0" step="0.05" value="0.88">
+                            <span id="opacity-val">88%</span>
+                        </div>
+
+                        <div class="hud-control-group">
+                            <label for="beat-toggle">
+                                <input type="checkbox" id="beat-toggle" checked style="accent-color: #ef4444; margin-right: 4px;"> Cardiac Beat
+                            </label>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Vessel Color Risk Legend -->
+                <div class="card-body" style="padding-top: 0.75rem; padding-bottom: 0.75rem;">
+                    <div class="color-legend">
+                        <div class="legend-item">
+                            <span class="legend-dot green"></span>
+                            <span>Low Stenosis Risk (&lt;35%)</span>
+                        </div>
+                        <div class="legend-item">
+                            <span class="legend-dot yellow"></span>
+                            <span>Moderate / Borderline (35–65%)</span>
+                        </div>
+                        <div class="legend-item">
+                            <span class="legend-dot red"></span>
+                            <span>High Stenosis Risk (&gt;65%)</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 3 Major Coronary Vessels Breakdown Cards -->
+            <div class="vessels-grid">
+                
+                <!-- LAD Card -->
+                <div class="vessel-card" id="vessel-card-lad">
+                    <div class="vessel-card-header">
+                        <span class="vessel-title">
+                            <span class="vessel-status-indicator" id="vessel-lad-dot"></span> LAD Artery
+                        </span>
+                        <span class="vessel-prob-val" id="vessel-lad-prob">--%</span>
+                    </div>
+                    <div class="vessel-progress-bar-bg">
+                        <div class="vessel-progress-bar-fill" id="vessel-lad-bar"></div>
+                    </div>
+                    <div class="vessel-status-text" id="vessel-lad-status">Analyzing...</div>
+                    <div class="vessel-territory">Territory: Anterior wall, Septum & Apex</div>
+                </div>
+
+                <!-- LCX Card -->
+                <div class="vessel-card" id="vessel-card-lcx">
+                    <div class="vessel-card-header">
+                        <span class="vessel-title">
+                            <span class="vessel-status-indicator" id="vessel-lcx-dot"></span> LCX Artery
+                        </span>
+                        <span class="vessel-prob-val" id="vessel-lcx-prob">--%</span>
+                    </div>
+                    <div class="vessel-progress-bar-bg">
+                        <div class="vessel-progress-bar-fill" id="vessel-lcx-bar"></div>
+                    </div>
+                    <div class="vessel-status-text" id="vessel-lcx-status">Analyzing...</div>
+                    <div class="vessel-territory">Territory: Lateral & Posterolateral LV</div>
+                </div>
+
+                <!-- RCA Card -->
+                <div class="vessel-card" id="vessel-card-rca">
+                    <div class="vessel-card-header">
+                        <span class="vessel-title">
+                            <span class="vessel-status-indicator" id="vessel-rca-dot"></span> RCA Artery
+                        </span>
+                        <span class="vessel-prob-val" id="vessel-rca-prob">--%</span>
+                    </div>
+                    <div class="vessel-progress-bar-bg">
+                        <div class="vessel-progress-bar-fill" id="vessel-rca-bar"></div>
+                    </div>
+                    <div class="vessel-status-text" id="vessel-rca-status">Analyzing...</div>
+                    <div class="vessel-territory">Territory: Inferior wall & RV Myocardium</div>
+                </div>
+
+            </div>
+
+        </section>
+
+        <!-- Column 3: Overall CAD Risk & SHAP Feature Attributions -->
+        <section class="right-column">
+            
+            <!-- Overall CAD Risk Card -->
+            <div class="card">
+                <div class="card-header">
+                    <span class="card-title">📊 Overall CAD Risk Probability</span>
+                    <span class="risk-pill high" id="overall-risk-badge">HIGH RISK</span>
+                </div>
+                <div class="card-body">
+                    <div class="overall-score-box">
+                        <div class="score-main-row">
+                            <span class="score-number" id="overall-cad-score">--%</span>
+                            <span class="score-status-desc" id="overall-cad-status">Calculating...</span>
+                        </div>
+                        <div class="vessel-progress-bar-bg" style="height: 9px; margin-top: 4px;">
+                            <div class="vessel-progress-bar-fill" id="overall-cad-bar"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- SHAP Explainability Card -->
+            <div class="card" style="flex: 1;">
+                <div class="card-header">
+                    <span class="card-title">🔍 Explainable AI: SHAP Feature Importance</span>
+                    <span style="font-size: 0.72rem; color: #94a3b8;">Local Attribution</span>
+                </div>
+                <div class="card-body" style="display: flex; flex-direction: column;">
+                    <p style="font-size: 0.76rem; color: var(--text-secondary); margin-bottom: 0.35rem;">
+                        How specific clinical features pushed this patient's risk higher (Crimson) or lower (Emerald):
+                    </p>
+                    
+                    <!-- Chart.js Canvas Container -->
+                    <div class="shap-chart-wrapper">
+                        <canvas id="shap-chart-canvas"></canvas>
+                    </div>
+
+                    <!-- Clinical Narrative Explanation -->
+                    <div class="shap-narrative-card">
+                        <strong>Clinical Explanation:</strong>
+                        <div id="shap-narrative-text" style="margin-top: 4px;">
+                            Extracting feature attributions from XGBoost TreeSHAP...
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </section>
+
+    </main>
+
+    <!-- Vendor Scripts (Local offline first with CDN fallback) -->
+    <script src="/static/js/vendor/three.min.js"></script>
+    <script src="/static/js/vendor/OrbitControls.js"></script>
+    <script src="/static/js/vendor/GLTFLoader.js"></script>
+    <script src="/static/js/vendor/chart.min.js"></script>
+
+    <!-- Application Scripts -->
+    <script src="/static/js/heartViewer3D.js?v=2"></script>
+    <script src="/static/js/app.js?v=2"></script>
+</body>
+</html>
